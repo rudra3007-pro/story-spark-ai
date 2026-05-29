@@ -21,35 +21,53 @@ const toggleReaction = async (
     throw new ApiError(httpStatus.BAD_REQUEST, "Post not found!");
   }
 
-  // Check if reaction already exists
-  const existingReaction = await Reaction.findOne({
-    postId: postId,
+  // Atomically find and delete the reaction if it exists
+  const deletedReaction = await Reaction.findOneAndDelete({
+    postId: new Types.ObjectId(postId),
     userId: user._id,
     type: type,
   });
 
-  if (existingReaction) {
-    // Remove reaction
-    await Reaction.findByIdAndDelete(existingReaction._id);
-    post.likesCount = Math.max(0, post.likesCount - 1);
-    post.reactions = post.reactions || [];
-    post.reactions = post.reactions.filter(
-      (rId) => rId.toString() !== existingReaction._id.toString()
+  if (deletedReaction) {
+    // Atomically decrement likesCount and remove the reaction ID
+    const updatedPost = await Post.findOneAndUpdate(
+      { _id: postId },
+      {
+        $inc: { likesCount: -1 },
+        $pull: { reactions: deletedReaction._id },
+      },
+      { new: true }
     );
-    await post.save();
-    return { message: "Reaction removed", likesCount: post.likesCount };
+    const likesCount = updatedPost ? Math.max(0, updatedPost.likesCount) : 0;
+    return { message: "Reaction removed", likesCount };
   } else {
-    // Add reaction
-    const newReaction = await Reaction.create({
-      postId: new Types.ObjectId(postId),
-      userId: user._id,
-      type: type,
-    });
-    post.likesCount = post.likesCount + 1;
-    post.reactions = post.reactions || [];
-    post.reactions.push(newReaction._id);
-    await post.save();
-    return { message: "Reaction added", likesCount: post.likesCount };
+    // Add reaction atomically
+    try {
+      const newReaction = await Reaction.create({
+        postId: new Types.ObjectId(postId),
+        userId: user._id,
+        type: type,
+      });
+
+      // Atomically increment likesCount and push the new reaction ID
+      const updatedPost = await Post.findOneAndUpdate(
+        { _id: postId },
+        {
+          $inc: { likesCount: 1 },
+          $addToSet: { reactions: newReaction._id },
+        },
+        { new: true }
+      );
+      const likesCount = updatedPost ? updatedPost.likesCount : 0;
+      return { message: "Reaction added", likesCount };
+    } catch (error: any) {
+      // Handle rare duplicate reaction race condition
+      if (error.code === 11000) {
+        const currentPost = await Post.findById(postId);
+        return { message: "Reaction added", likesCount: currentPost ? currentPost.likesCount : 0 };
+      }
+      throw error;
+    }
   }
 };
 
