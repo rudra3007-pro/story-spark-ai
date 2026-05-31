@@ -19,19 +19,8 @@ import CollabRoom from "./components/collab/CollabRoom";
 import StoriesComponent from "./components/stories/stories.component";
 import PublishedStoriesComponent from "./components/dashboard/posts/published_stories.component";
 
-
-
-
 import ScrollToTopButton from "./components/ScrollToTopButton";
-
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-  Outlet,
-} from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
-
 
 import HeroSectionComponent from "./components/hero/hero_section.component";
 import HomeComponent from "./components/home/home.component";
@@ -42,10 +31,21 @@ import PostDetailsComponent from "./components/post/post.details.component";
 import PostListsComponent from "./components/dashboard/posts/post_lists.component";
 import PricingComponent from "./components/pricing/pricing.component";
 import PrivacyPolicy from "./components/footer/Privacy.tsx";
+import CookiePolicy from "./components/footer/cookie-policy.tsx";
+import Terms from "./components/footer/terms.tsx";
+import GuidelinesComponent from "./components/guidelines/guidelines.component";
+
+import TemplatesComponent from "./components/templates/templates.component";
+import CommunityComponent from "./components/community/community.component";
+import ResourcesListComponent from "./components/community/resources_list.component";
+import ResourceDetailComponent from "./components/community/resource_detail.component";
+import MagicCursorComponent from "./components/magic-cursor/magic_cursor.component";
+import ContributorsComponent from "./components/footer/contributors";
+import StoryInspirationWrapper from "./components/StoryInspirationWrapper";
+import WritingAssistantComponent from "./components/writing-assistant/writing_assistant.component";
+import BranchingStory from "./components/stories/BranchingStory";
 import ProfileComponent from "./components/dashboard/profile/profile.component";
 import ReportBug from "./components/report-bug/ReportBug";
-import ResourceDetailComponent from "./components/community/resource_detail.component";
-import ResourcesListComponent from "./components/community/resources_list.component";
 import SettingComponent from "./components/dashboard/settings/settings.component";
 import SignUpComponent from "./components/signup/signup.component";
 import StoryWorkspace from "./components/story/StoryWorkspace";
@@ -98,7 +98,6 @@ const router = createBrowserRouter([
       { path: "signup", element: <SignUpComponent /> },
       { path: "pricing", element: <PricingComponent /> },
       { path: "post/:id", element: <PostDetailsComponent /> },
-      { path: "help", element: <HelpCenterComponent /> },
       { path: "contact-us", element: <Contact /> },
       { path: "about-us", element: <AboutUsComponent /> },
       { path: "career", element: <CareerComponent /> },
@@ -148,11 +147,9 @@ const router = createBrowserRouter([
           { path: "users", element: <UserComponent /> },
           {
             element: <ProtectedRoute allowedRoles={[USER_ROLE.USER, USER_ROLE.WRITER]} />,
-            children: [{ path: "settings", element: <SettingComponent /> },
-              {
-    path: "published-stories",
-    element: <PublishedStoriesComponent />,
-  },
+            children: [
+              { path: "settings", element: <SettingComponent /> },
+              { path: "published-stories", element: <PublishedStoriesComponent /> },
             ],
           },
           {
@@ -180,13 +177,4 @@ function App() {
   );
 }
 
-
-
 export default App;
-
-
-export default App;
-
-
-export default App;
-
