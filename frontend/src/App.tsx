@@ -46,8 +46,7 @@ import BranchingStory from "./components/stories/BranchingStory";
 import ReportBug from "./components/report-bug/ReportBug";
 import AnalyticsPage from "./components/dashboard/analytics/analytics.page";
 import StoryWorkspace from "./components/story/StoryWorkspace";
-// <<<<<<< HEAD
-// =======
+import Scrolltotopandscrolltobottom from "./components/Scrolltotopandscrolltobottom.tsx"
 
 type ProtectedRouteProps = {
   allowedRoles: string[];
