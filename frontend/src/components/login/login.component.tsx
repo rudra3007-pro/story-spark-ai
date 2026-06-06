@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+
 import SSInput from "../ui-component/ss-input/ss-input";
 import SSButton from "../ui-component/ss-button/ss-button";
-import { useState } from "react";
+
 import { motion } from "framer-motion";
 import {
   useLoginUserMutation,
@@ -184,6 +184,7 @@ const LoginComponent = () => {
                 register={register}
                 validation={{ required: "Password is required" }}
                 error={errors.password}
+                
               />
               <div className="flex justify-end pt-2">
                 <Link
